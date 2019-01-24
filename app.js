@@ -12,9 +12,36 @@
 */
 
 //データモジュール
+/*
+*ユーザーから受け取る入力値は収支の種類と、項目、値段の三つなので
+*あらかじめコンストラクターが受け取る関数のパラメータをそれぞれid、description､value
+*と設定。コンストラクターの値が分かりやすいようにそれぞれの変数と名前が同一
+*/
 var budgetController = (function(){
 	
-    // some code
+    var Expense = function(id, description, value){
+		this.id = id;
+		this.description = description;
+		this.value = value;
+	};
+	
+	 var Income = function(id, description, value){
+		this.id = id;
+		this.description = description;
+		this.value = value;
+	};
+	
+	var data = {
+		allItems: {
+			exp: [],
+			inc: []
+		},
+		totals: {
+			exp: 0,
+			inc: 0
+		}
+	};
+	
 			
 })();
 
