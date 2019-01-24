@@ -13,12 +13,12 @@
 
 //データモジュール
 /*
-*ユーザーから受け取る入力値は収支の種類と、項目、値段の三つなので
-*あらかじめコンストラクターが受け取る関数のパラメータをそれぞれid、description､value
-*と設定。コンストラクターの値が分かりやすいようにそれぞれの変数と名前が同一
+*ユーザーから受け取る入力値idが識別固有番号、descriptionが項目、valueが収支の値を示す
+*ユーザーインターフェイスから入力された値を格納、収支バランスの新規項目を返す
 */
 var budgetController = (function(){
 	
+	//コンストラクタ
     var Expense = function(id, description, value){
 		this.id = id;
 		this.description = description;
@@ -30,7 +30,10 @@ var budgetController = (function(){
 		this.description = description;
 		this.value = value;
 	};
+	//コンストラクタ
 	
+	//入力された収支と収入の格納配列変数、exp incがallItemsオブジェクト内で生成されて、またtotalsオブジェクトで収支の合計額を格納
+	//以上二つのオブジェクトをdataオブジェクト内に格納。
 	var data = {
 		allItems: {
 			exp: [],
@@ -42,6 +45,37 @@ var budgetController = (function(){
 		}
 	};
 	
+	return{
+		addItem: function(type, des, val) {
+			var newItem, ID;
+			
+			//追加される収支項目に付与される識別番号
+			//配列の一番後ろをID値を指定して新たなIDを作成
+			//初期設定では収支バランスの内容がないためID＝０に設定
+			if(data.allItems[type].length > 0) {
+				ID = data.allItems[type][data.allItems[type].length - 1].id +　1;	
+			} else {
+				ID = 0;
+			}
+			//getInputのtype、収支によって生成されるnewオブジェクトが変化する
+			if(type === 'exp'){
+				newItem = new Expense(ID, des, val);
+			} else if (type === 'inc') {
+				newItem = new Income(ID, des, val);
+			}			
+			
+			//上記で生成されたオブジェクトを収支バランスデータの新項目として格納する
+			//[type]は収支の種類を判断する
+			data.allItems[type].push(newItem);
+			//追加された項目を返す
+			return newItem;
+		},
+		
+		testing: function() {
+			console.log(data);
+		}
+		
+	};
 			
 })();
 
@@ -59,7 +93,7 @@ var UIController = (function(){
 	return {
 		getInput: function() {
 			return{
-					type: document.querySelector(DOMstrings.inputType).value, // Will be either inc or exp
+					type: document.querySelector(DOMstrings.inputType).value, // budgetControllerのaddItemオブジェクトへの収支を決定させる
 					description: document.querySelector(DOMstrings.inputDescription).value,
 					value: document.querySelector(DOMstrings.inputValue).value
 			};
@@ -95,12 +129,14 @@ var controller =(function (budgetCtrl, UICtrl){
 
 	
 	var ctrlAddItem = function(){
+		var input, newItem;
 		
-		// 1. Get the field input data
-		var input = UICtrl.getInput();
-		console.log(input);
+		// 1. ユーザーインターフェイスのgetInputが返した値をinputへ格納
+		input = UICtrl.getInput();
 		
-		// 2. Add the item to the budget controller
+		
+		// 2. 上記inputへ格納されたパラメータの値を挿入
+		newItem = budgetCtrl.addItem(input.type, input.description, input.value);
 		
 		
 		// 3. Add the item to the UI
