@@ -49,8 +49,23 @@ var UIController = (function(){
 //BudgetControllerとUIControllerを統括するコントロールモジュール
 var controller =(function (budgetCtrl, UICtrl){
 	
-	//UICtrl内のDOMstringsをコール
+	//イベントリスナーをまとめる為の関数
+	var setupEventListeners = function() {	
+	//UICtrl内のDOMstringsを呼び出し
 	var DOM = UICtrl.getDOMstrings();
+		
+	//マウスでクリックをした場合
+	document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem);
+	
+	//エンターキーを押した場合
+	document.addEventListener('keypress', function(event) {
+		
+		if(event.keycode === 13 || event.which === 13){
+			ctrlAddItem();
+		}
+	});
+	};
+
 	
 	var ctrlAddItem = function(){
 		
@@ -67,20 +82,17 @@ var controller =(function (budgetCtrl, UICtrl){
 		
 		// 5. Display the budget on the UI
 
-	}
+	};
 	
-	//マウスでクリックをした場合
-	document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem);
-	
-	//エンターキーを押した場合
-	document.addEventListener('keypress', function(event) {
-		
-		if(event.keycode === 13 || event.which === 13){
-			ctrlAddItem();
-		}
-		
-	});
+	//初期化状態を呼び出すための関数
+	return{
+		init: function(){
+			console.log('Application has started.');
+			setupEventListeners();
+		}	
+	};
 	
 })(budgetController,UIController);
 
-
+//アプリが開かれるとこの関数が呼び出される
+controller.init();
