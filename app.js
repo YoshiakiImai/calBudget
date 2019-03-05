@@ -97,7 +97,7 @@ var UIController = (function(){
 			return{
 					type: document.querySelector(DOMstrings.inputType).value, // budgetControllerのaddItemオブジェクトへの収支を決定させる
 					description: document.querySelector(DOMstrings.inputDescription).value,
-					value: document.querySelector(DOMstrings.inputValue).value
+					value: parseFloat(document.querySelector(DOMstrings.inputValue).value)
 			};
 		},
 		
@@ -175,7 +175,8 @@ var controller =(function (budgetCtrl, UICtrl){
 		
 		// 2. return the budget
 		
-		// 5. Display the budget on the UI
+		// 3. Display the budget on the UI
+		
 	};
 	
 	var ctrlAddItem = function(){
@@ -183,20 +184,19 @@ var controller =(function (budgetCtrl, UICtrl){
 		
 		// 1. ユーザーインターフェイスのgetInputが返した値をinputへ格納
 		input = UICtrl.getInput();
-		
-		
+		//ユーザーから入力された場合に
+		if(input.description !== "" && !isNaN(input.value) && input.value > 0){
 		// 2. 上記inputへ格納されたパラメータのオブジェクトを挿入
 		newItem = budgetCtrl.addItem(input.type, input.description, input.value);
-		
-		
 		// 3. UICtrlのaddListenItemを呼び出しオブジェクトを引数として収支の種類をinput.typeで判断させ値を返す
 		UICtrl.addListItem(newItem, input.type);
-		
 		// 4. ユーザーより事前に入力ストアされた値を削除する関数
 		UICtrl.clearFields();
+		// 5. Calculate and update budget
+		updateBudget();
+			
+		}
 		
-		
-
 	};
 	
 	//初期化状態を呼び出すための関数
